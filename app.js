@@ -57,14 +57,14 @@ export const searchArtistByKeyword = async (keyword) => {
 
 };
 
-//show keyword history
-//This function lets users see past search keywords and run a search again:
-export const showKeywordHistory = async () => {
+//show artist history
+//This function lets users see past search artists and run a search again:
+export const showArtistHistory = async () => {
     try {
         const keywords = await db.find('search_history_keyword');
 
         if (!keywords.length) {
-            console.log('No keyword history found.');
+            console.log('No artist history found.');
             return;
         }
 
@@ -72,7 +72,7 @@ export const showKeywordHistory = async () => {
             {
                 type: 'list',
                 name: 'keyword',
-                message: 'Select a keyword to search again or Exit:',
+                message: 'Select an artist to search again or Exit:',
                 choices: ['Exit', ...keywords.map(k => k.keyword)],
             }
         ]);
