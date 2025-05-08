@@ -1,6 +1,6 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { searchArtistByKeyword, showArtistHistory } from './app.js';
+import { searchArtistByKeyword, showArtistHistory, showSelectionHistory } from './app.js';
 
 const cli = yargs(hideBin(process.argv));
 
@@ -9,7 +9,7 @@ cli.command(
     'Search for an artist or band with a keyword(s)',
     (yargs) => {
         yargs.positional('keyword' , {
-            describe: 'The keyword to search for is: ',
+            desrcibe: 'The keyword to search for is: ',
             type: 'string',
     });
     },
@@ -24,15 +24,17 @@ cli.command(
     (yargs) => {
         yargs.positional('type', {
             desrcibe: 'Choose between keywords or selections',
-            choices: ['artists'],
+            choices: ['keywords','selections'], //updated so that choices were distinct
+            type: 'string',
         });
     },
     (argv) => {
-        if (argv.type === 'artists') {
+        if (argv.type === 'keywords') { //updated so flow of output is correct based on choice 
             showArtistHistory();
+        } else if(argv.type === 'selections'){
+            showSelectionHistory();
+        }
     }
-
-}
 );
 
 cli.help().argv;

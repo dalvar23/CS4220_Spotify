@@ -4,7 +4,7 @@ import * as db from './db.js';
 
 // display helper
 const printArtist = (artist) => {
-    console.log('\n Artist Info:');
+    console.log('\nArtist Info:');
     console.log(`Name: ${artist.name}`);
     console.log(`Genre: ${artist.genre}`);
     console.log(`Popularity: ${artist.popularity}`);
@@ -25,7 +25,13 @@ export const searchArtistByKeyword = async (keyword) => {
 
         const results = data.items;
 
-        await db.insert('search_history_keyword', {keyword});
+        const prevKeywords = await db.find('search_history_keyword');
+        const keywordExists = prevKeywords.some(k => k.keyword === keyword);
+        if(!keywordExists){
+            await db.insert('search_history_keyword', { keyword });
+        }  // updated to duplicate check before inserting keyword
+        
+    
 
         const { selectedID } = await inquirer.prompt([
             {
@@ -41,7 +47,13 @@ export const searchArtistByKeyword = async (keyword) => {
 
         const selectedArtist = await api.searchID(selectedID);
 
-        await db.insert('search_history_artist', selectedArtist);
+        const prevSelections = await db.find('search_history_artist');
+        const selectionExist = prevSelections.some(s => s.id === selectedArtist.id);
+        if(!selectionExist){
+            await db.insert('search_history_artist', selectedArtist); // updated to insert unique selected artists
+        }
+
+        
 
         printArtist({
             name: selectedArtist.name,
@@ -72,7 +84,7 @@ export const showArtistHistory = async () => {
             {
                 type: 'list',
                 name: 'keyword',
-                message: 'Select an artist to search again or Exit:',
+                message: 'Select a keyword from history or Exit:',
                 choices: ['Exit', ...keywords.map(k => k.keyword)],
             }
         ]);
@@ -101,7 +113,7 @@ export const showSelectionHistory = async () => {
             {
                 type: 'list',
                 name: 'artistId',
-                message: 'Select an artist or Exit:',
+                message: `Select an artist or Exit:`,
                 choices: ['Exit', ...selections.map(a => ({
                     name: `${a.name} (${a.genres?.join(', ') || 'Unknown'})`,
                     value: a.id
@@ -110,7 +122,7 @@ export const showSelectionHistory = async () => {
         ]);
 
         if (artistId !== 'Exit') {
-            const artist = selections.find(a => a.id === artistId);
+            const artist = await api.searchID(artistId);  //fetch artist info
             printArtist({
                 name: artist.name,
                 genre: artist.genres?.join(', ') || 'Unknown',

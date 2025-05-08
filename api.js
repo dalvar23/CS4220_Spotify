@@ -31,7 +31,7 @@ export const searchAPI = async (searchName) => {
     try {
         const token = await getToken();
 
-        const endpoint = `https://api.spotify.com/v1/search?q=${encodeURIComponent(searchName)}&type=artist&limit=1`;
+        const endpoint = `https://api.spotify.com/v1/search?q=${encodeURIComponent(searchName)}&type=artist&limit=5`;
         const response = await axios.get(endpoint, {
             headers: { Authorization: `Bearer ${token}` }
         });
@@ -59,8 +59,9 @@ export const searchID = async (id) => {
     }
 };
 
-// const art = await searchAPI('Eminem');
+// const art = await searchAPI('track','Stan');
 // console.log(art);
-
+// const arts = await searchAPI('artist','Metallica');
+// console.log(arts);
 // const testing = await searchID('0C0XlULifJtAgn6ZNCW2eu');
 // console.log(testing);
