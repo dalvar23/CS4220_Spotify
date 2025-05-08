@@ -9,7 +9,7 @@ cli.command(
     'Search for an artist or band with a keyword(s)',
     (yargs) => {
         yargs.positional('keyword' , {
-            desrcibe: 'The keyword to search for is: ',
+            describe: 'The keyword to search for is: ',
             type: 'string',
     });
     },
